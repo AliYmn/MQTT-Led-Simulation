@@ -5,28 +5,44 @@ Four Sensors;
 3th sensors : give information about led status such on or off
 4th sensors : flip-flop led animation
 """
+import paho.mqtt.client as mqtt # lib
+import time
 
-import paho.mqtt.client as mqtt
-
-# This is the Subscriber
-
+# This is the Subscribers
 def on_connect(client, userdata, flags, rc):
-  print("Connected with result code "+str(rc))
+  print("Subscriber server started successfully.")
   client.subscribe([("sensors/ledon",0),("sensors/ledoff",0),("sensors/ledstatus",0),("sensors/ledflipflop",0)]) # system subscribe this channel
 
+led_status = False
+# check and return
 def on_message(client, userdata, msg):
-  print("msg.topic : ",msg.topic)
+  global led_status
   # led on actions
   if (msg.payload.decode() == "Led ON" and msg.topic == "sensors/ledon"):
-    print("Led On!")
+    led_status = True
+    print("Led now On.")
   # led on actions
   elif (msg.payload.decode() == "Led OFF" and msg.topic == "sensors/ledoff"):
-    print("Led Off!")
+    print("Led now Off.")
   # led on actions
   elif (msg.payload.decode() == "Led Status" and msg.topic == "sensors/ledstatus"):
-    print("Led Status : Led ON")
+    if not led_status:
+          led_status = False
+    if led_status:
+      print("Led Status : Led ON")
+    else:
+      print("Led Status : Led Off")
   elif (msg.payload.decode() == "Start" and msg.topic == "sensors/ledflipflop"):
-      print("Led Flip Flop")
+    print("Flip-Flop started.")
+    for amount in range(5):
+      if led_status:
+        led_status = not led_status
+        print("Led On")
+      else:
+        led_status = not led_status
+        print("Led Off")
+      time.sleep(1)
+    print("flip-flop finished.")
   else:
       print("Command not found! -> ",msg.payload.decode())
   # client.disconnect()
