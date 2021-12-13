@@ -1,7 +1,8 @@
 """
 Two Publisher;
 1-) manage 1th sensor and 2th sensors : led on and led off
-2-) manage 3th sensor and 4th sensors : get led status and flip-flop animation
+2-) manage 3th sensor: get led status 
+3-) manage 4th sensor : temperature periodically
 """
 
 import paho.mqtt.client as mqtt # paho lib.
@@ -21,7 +22,6 @@ while loop:
         /ledon : Led ON.
         /ledoff : Led Off
         /status : it returns information about led status such as on or off
-        /flipflop : led will be flashes for 5 seconds.
         """)
     elif commands == "/ledon":
         client.publish("sensors/ledon", "Led ON");
@@ -29,8 +29,6 @@ while loop:
         client.publish("sensors/ledoff", "Led OFF");
     elif commands == "/status":
         client.publish("sensors/ledstatus", "Led Status");
-    elif commands == "/flipflop":
-        client.publish("sensors/ledflipflop", "Start");
     elif commands == "/quit":
         client.disconnect();
         break

@@ -11,7 +11,7 @@ import time
 # This is the Subscribers
 def on_connect(client, userdata, flags, rc):
   print("Subscriber server started successfully.")
-  client.subscribe([("sensors/ledon",0),("sensors/ledoff",0),("sensors/ledstatus",0),("sensors/ledflipflop",0)]) # system subscribe this channel
+  client.subscribe([("sensors/ledon",0),("sensors/ledoff",0),("sensors/ledstatus",0),("sensors/ledflipflop",0),("sensors/temperature",0)]) # system subscribe this channel
 
 led_status = False
 # check and return
@@ -32,17 +32,8 @@ def on_message(client, userdata, msg):
       print("Led Status : Led ON")
     else:
       print("Led Status : Led Off")
-  elif (msg.payload.decode() == "Start" and msg.topic == "sensors/ledflipflop"):
-    print("Flip-Flop started.")
-    for amount in range(5):
-      if led_status:
-        led_status = not led_status
-        print("Led On")
-      else:
-        led_status = not led_status
-        print("Led Off")
-      time.sleep(1)
-    print("flip-flop finished.")
+  elif (msg.topic == "sensors/temperature"):
+    print("Temperature now is : {} C".format(str(msg.payload.decode())))
   else:
       print("Command not found! -> ",msg.payload.decode())
   # client.disconnect()
